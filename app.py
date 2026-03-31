@@ -14,7 +14,7 @@ def post():
 def put():
     return {"hola": "put"}
 
-@app.path("/saludo/path")
+@app.patch("/saludo/path")
 def path():
     return {"hola": "path"}
 
