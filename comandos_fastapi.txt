@@ -1,0 +1,3 @@
+activar venv: source venv/bin/activate
+
+testear metodos fastapi en la web (primero hay que activar venv): fastapi dev nombre_archivo.py
