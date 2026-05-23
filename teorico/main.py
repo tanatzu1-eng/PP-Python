@@ -129,8 +129,5 @@ async def get_articulos_by_id(
             return articulo
     raise HTTPException(status_code=404, detail="Articulo no encontrado")
 
-
-
-
 # la flechita (->) es una funcion de python que indica  el tipo de dato que debe retornar una funcion, en este caso el response_model debe tener la estructura del ArticuloSchema
 # ================================================================================================================
