@@ -120,6 +120,7 @@ async def get_articulos() -> list[ArticuloSchema]:
 #    **server_error
 # }
 
+# la flechita (->) es una funcion de python que indica  el tipo de dato que debe retornar una funcion, en este caso el response_model debe tener la estructura del ArticuloSchema
 
 async def get_articulos_by_id(
     id: Annotated[int, Path(gt=0)]):
@@ -128,6 +129,4 @@ async def get_articulos_by_id(
         if articulo["id"] == id:
             return articulo
     raise HTTPException(status_code=404, detail="Articulo no encontrado")
-
-# la flechita (->) es una funcion de python que indica  el tipo de dato que debe retornar una funcion, en este caso el response_model debe tener la estructura del ArticuloSchema
 # ================================================================================================================
