@@ -20,7 +20,9 @@ def ver_database(db: session = Depends(get_db)):
 
 @router.get("/{id}", response_model = ArticuloSchema)
 def ver_articulo(id: PARAMETROS_ID, db: session = Depends(get_db)):
-    articulo = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first() # first() me devuelve solo el primer resultado en caso de haber mas de uno (ahora es innecesario porque estoy filtrando por id, pero si filtrara por nombre o algun parametro repetible necesitaria first())
+    articulo = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first() # first() me devuelve solo el primer
+    # resultado en caso de haber mas de uno (ahora es innecesario porque estoy filtrando por id, pero si filtrara por nombre o algun parametro
+    # repetible necesitaria first)
 
     if articulo is None:
         raise HTTPException(status_code = 404, detail = "Articulo no encontrado")
