@@ -49,16 +49,29 @@ def crear_articulo(
 
 
 @router.put("/{id}", response_model = UpdateSchema)
-def editar_articulo():
-    pass
+def editar_articulo(id: PARAMETROS_ID, articulo: UpdateSchema, db: session = Depends(get_db)):
+    articulo_editado = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first()
 
+    if articulo_editado is None:
+        raise HTTPException(status_code = 404, detail = "Id de articulo no encontrado")
 
-@router.patch("/{id}", response_model = UpdateSchema)
-def modificar_dato_articulo():
-    pass
+    articulo_editado.nombre = articulo.nombre
+    articulo_editado.precio = articulo.precio
+    articulo_editado.disponible = articulo.disponible
+
+    db.commit()
+    db.refresh(articulo_editado)
+    return articulo_editado
 
 
 @router.delete("/{id}", response_model = ArticuloSchema)
-def borrar_articulo():
-    pass
+def borrar_articulo(id: PARAMETROS_ID, db: session = Depends(get_db)):
+    articulo_borrado = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first()
+
+    if articulo_borrado is None:
+        raise HTTPException(status_code = 404, detail = "Id de articulo no encontrado")
+
+    db.delete(articulo_borrado)
+    db.commit()
+    return articulo_borrado
 #===================================================================================================================================================
