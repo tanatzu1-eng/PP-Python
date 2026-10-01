@@ -1,0 +1,9 @@
+En esta clase, mudamos la API de sql alchemy a sql model.
+
+=============================================================================================================================================
+
+Para que sirve esto?
+En si no cambia el funcionamiento ni el rendimiento del codigo, pero sirve para no repetir codigo ni escribir de mas.
+En sql alchemy, los path operations toman como referencia los esquemas que definimos, al mismo tiempo, los modelos para la database tambien
+usan los mismos esquemas. Eso funciona, pero es repetir innecesariamente el codigo, por que no usar los propios modelos como esquemas? si
+son lo mismo.
