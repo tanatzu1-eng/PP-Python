@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Path,  Depends
+from sqlmodel import Session, select
 
 from ..database import get_db
-from sqlalchemy.orm import session
 from ..models import models_articulos
 from ..schemas.schemas_articulos import PARAMETROS_ID, PARAMETROS_NOMBRE, PARAMETROS_PRECIO, PARAMETROS_DISPONIBLE, ArticuloSchema, UpdateSchema
 
@@ -12,17 +12,15 @@ router = APIRouter()
 #===================================================================================================================================================
 # path operations:
 #===================================================================================================================================================
-@router.get("/", response_model = list[ArticuloSchema])
-def ver_database(db: session = Depends(get_db)):
+@router.get("/", response_model = list[models_articulos.ArticuloPublic])
+def ver_database(db: Session = Depends(get_db)):
 
-    return db.query(models_articulos.Articulo).all()
+    return db.exec(select(models_articulos.Articulo)).all()
 
 
-@router.get("/{id}", response_model = ArticuloSchema)
-def ver_articulo(id: PARAMETROS_ID, db: session = Depends(get_db)):
-    articulo = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first() # first() me devuelve solo el primer
-    # resultado en caso de haber mas de uno (ahora es innecesario porque estoy filtrando por id, pero si filtrara por nombre o algun parametro
-    # repetible necesitaria first)
+@router.get("/{id}", response_model = models_articulos.ArticuloPublic)
+def ver_articulo(id: PARAMETROS_ID, db: Session = Depends(get_db)):
+    articulo = db.get(models_articulos.Articulo, id)
 
     if articulo is None:
         raise HTTPException(status_code = 404, detail = "Articulo no encontrado")
@@ -30,19 +28,17 @@ def ver_articulo(id: PARAMETROS_ID, db: session = Depends(get_db)):
     return articulo
 
 
-@router.post("/", response_model = ArticuloSchema)
+@router.post("/", response_model = models_articulos.ArticuloCreate)
 def crear_articulo(
-    articulo: UpdateSchema,
-    db: session = Depends(get_db)):
+    articulo: models_articulos.ArticuloCreate,
+    db: Session = Depends(get_db)):
 
-    nuevo_articulo = models_articulos.Articulo(
-        nombre = articulo.nombre,
-        precio = articulo.precio,
-        disponible = articulo.disponible,
-    )
+    nuevo_articulo = models_articulos.Articulo.model_validate(articulo)
 
     if db.query(models_articulos.Articulo).filter(models_articulos.Articulo.nombre == articulo.nombre).first():
-            raise HTTPException(status_code = 400, detail = "Nombre de articulo ya existente")
+                raise HTTPException(status_code = 400, detail = "Nombre de articulo ya existente")
+    if db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == articulo.id).first():
+            raise HTTPException(status_code = 400, detail = "Id de articulo ya existente")
 
     db.add(nuevo_articulo)
     db.commit()
@@ -50,9 +46,9 @@ def crear_articulo(
     return nuevo_articulo
 
 
-@router.put("/{id}", response_model = UpdateSchema)
-def editar_articulo(id: PARAMETROS_ID, articulo: UpdateSchema, db: session = Depends(get_db)):
-    articulo_editado = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first()
+@router.put("/{id}", response_model = models_articulos.ArticuloCreate)
+def editar_articulo(id: PARAMETROS_ID, articulo: UpdateSchema, db: Session = Depends(get_db)):
+    articulo_editado = db.get(models_articulos.Articulo, id)
 
     if articulo_editado is None:
         raise HTTPException(status_code = 404, detail = "Id de articulo no encontrado")
@@ -66,14 +62,14 @@ def editar_articulo(id: PARAMETROS_ID, articulo: UpdateSchema, db: session = Dep
     return articulo_editado
 
 
-@router.delete("/{id}", response_model = ArticuloSchema)
-def borrar_articulo(id: PARAMETROS_ID, db: session = Depends(get_db)):
-    articulo_borrado = db.query(models_articulos.Articulo).filter(models_articulos.Articulo.id == id).first()
+@router.delete("/{id}", response_model = models_articulos.ArticuloCreate)
+def borrar_articulo(id: PARAMETROS_ID, db: Session = Depends(get_db)):
+    articulo_borrado = db.get(models_articulos.Articulo, id)
 
     if articulo_borrado is None:
         raise HTTPException(status_code = 404, detail = "Id de articulo no encontrado")
 
     db.delete(articulo_borrado)
     db.commit()
-    return articulo_borrado
+    return db.exec(select(models_articulos.Articulo)).all()
 #===================================================================================================================================================

@@ -3,11 +3,11 @@ from fastapi import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers.articulos_router import router
-from .database import Base, engine
+from .database import SQLModel, engine # en lugar de Base, importo SQLModel, funciona igual
 from .models import models_articulos
 
 
-Base.metadata.create_all(bind = engine)
+SQLModel.metadata.create_all(bind = engine)
 
 
 app = FastAPI()

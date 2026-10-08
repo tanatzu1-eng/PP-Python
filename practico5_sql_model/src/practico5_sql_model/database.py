@@ -1,25 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlmodel import create_engine, Session, SQLModel
 
 
-#===================================================================================================================================================
-# engine y session:
-#===================================================================================================================================================
-url_sqlite = "sqlite:///./articulos.db"
+url_sqlite = "sqlite:///./articulos_sqlmodel.db"
 
 engine = create_engine(url_sqlite, connect_args = {"check_same_thread": False})
 
-session = sessionmaker(bind = engine, autocommit = False, autoflush = False)
-#===================================================================================================================================================
 
-
-Base = declarative_base()
-
-
-# proveedor de sesiones:
 def get_db():
-    db = session()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session
