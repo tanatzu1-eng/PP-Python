@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .routers.articulo_router import router
 from .database import engine
+from .models.modelos import Articulo
 
 
 # ========================================================================================================
