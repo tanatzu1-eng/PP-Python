@@ -1,0 +1,4 @@
+{
+  "python.defaultInterpreterPath": "\practico6_alembic/.venv/bin/python",
+  "python.analysis.extraPaths": ["\practico6_alembic/src"]
+}
