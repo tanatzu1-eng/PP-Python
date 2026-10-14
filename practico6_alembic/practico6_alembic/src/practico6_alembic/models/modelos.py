@@ -8,6 +8,7 @@ class ArticuloBase(SQLModel):
     nombre: str
     precio: float
     disponible: bool = True
+    marca: str
 
 class Articulo(ArticuloBase, table = True):
     id: int | None = Field(default = None, primary_key = True)
@@ -22,4 +23,5 @@ class ArticuloUpdate(SQLModel): # el profe no pide esto, pero lo considero muy u
     nombre: str | None = None
     precio: float | None = None
     disponible: bool | None = None
+    marca: str | None = None
 # ========================================================================================================
