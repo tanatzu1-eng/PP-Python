@@ -8,7 +8,7 @@ class ArticuloBase(SQLModel):
     nombre: str
     precio: float
     disponible: bool = True
-    marca: str
+    marca: str | None = None # le habilito None porque los registros ya creados van a aparecer con un None en este campo
 
 class Articulo(ArticuloBase, table = True):
     id: int | None = Field(default = None, primary_key = True)
