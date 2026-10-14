@@ -49,6 +49,7 @@ def actualizar_articulo(id: PARAMETROS_ID, articulo_actualizado: modelos.Articul
     articulo.nombre = articulo_actualizado.nombre
     articulo.precio = articulo_actualizado.precio
     articulo.disponible = articulo_actualizado.disponible
+    articulo.marca = articulo_actualizado.marca
 
     db.commit()
     db.refresh(articulo)
