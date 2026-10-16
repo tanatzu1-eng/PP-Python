@@ -5,7 +5,7 @@ from .proveedor import ProveedorPublic
 
 # Articulo
 class ArticuloNested(ArticuloPublic):
-    proveedores: ProveedorPublic | None = None
+    proveedor: ProveedorPublic | None = None
 
 
 class ProveedorNested(ProveedorPublic):

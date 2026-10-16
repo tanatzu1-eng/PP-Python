@@ -2,19 +2,19 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from ..database import get_db
 
-from ..models import proveedor
+from ..models import proveedor, anidados
 from ..schemas.esquemas import PARAMETROS_ID
 
 
 router = APIRouter(prefix="/proveedores", tags=["proveedores"])
 
 
-@router.get("/", response_model = list[proveedor.ProveedorPublic])
+@router.get("/", response_model = list[anidados.ProveedorNested])
 def database_proveedor_completa(db: Session = Depends(get_db)):
     return db.exec(select(proveedor.Proveedor)).all()
 
 
-@router.get("/{id}", response_model = proveedor.ProveedorPublic)
+@router.get("/{id}", response_model = anidados.ProveedorNested)
 def proveedor_database(id: PARAMETROS_ID, db: Session = Depends(get_db)):
 
     resultado = db.exec(select(proveedor.Proveedor).where(proveedor.Proveedor.id == id)).first()
@@ -26,16 +26,17 @@ def proveedor_database(id: PARAMETROS_ID, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model = proveedor.ProveedorCreate)
-def crear_proveedor(nuevo_proveedor: proveedor.Proveedor, db: Session = Depends(get_db)):
+def crear_proveedor(nuevo_proveedor: proveedor.ProveedorCreate, db: Session = Depends(get_db)):
 
     if db.exec(select(proveedor.Proveedor).where(proveedor.Proveedor.nombre == nuevo_proveedor.nombre)).first():
         raise HTTPException(status_code = 400, detail = "el nombre del proveedor ya existe")
 
-    db.add(nuevo_proveedor)
+    db_proveedor = proveedor.ProveedorPublic.model_validate(nuevo_proveedor)
+    db.add(db_proveedor)
     db.commit()
-    db.refresh(nuevo_proveedor)
+    db.refresh(db_proveedor)
 
-    return nuevo_proveedor
+    return db_proveedor
 
 
 @router.put("/{id}", response_model = proveedor.ProveedorPublic)
