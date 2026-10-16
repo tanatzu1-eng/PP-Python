@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 from sqlmodel import SQLModel
-from src.practico6_alembic.models.modelos import Articulo
+from practico6_alembic.models.articulo import Articulo
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
